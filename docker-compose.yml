@@ -1,0 +1,40 @@
+version: '3'
+services:
+  proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: yi-proxy
+    restart: always
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    environment:
+      DB_MYSQL_HOST: "database"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "yi_db"
+      DB_MYSQL_PASSWORD: "yisx012099345"
+      DB_MYSQL_NAME: "yi_db"
+    networks:
+      - yi_public
+    volumes:
+      - ./data/app:/data
+      - ./letsencrypt:/etc/letsencrypt
+
+  database:
+    image: 'jc21/mariadb-aria:latest'
+    container_name: yi-proxy-db
+    restart: always
+    networks:
+      - yi_public
+    environment:
+      MYSQL_ROOT_PASSWORD: 'yisx012099345'
+      MYSQL_DATABASE: 'yi_db'
+      MYSQL_USER: 'yi_db'
+      MYSQL_PASSWORD: 'yisx012099345'
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+networks:
+  default:
+    external:
+      name: yi_public
